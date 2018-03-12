@@ -33,6 +33,14 @@ class ScanManager
 		
 	}
 	
+	/**
+	 * @param string[]|string $path
+	 */
+	public function addDir(...$path): void
+	{
+		
+	}
+	
 	
 	public function getCollection(): MapCollection
 	{

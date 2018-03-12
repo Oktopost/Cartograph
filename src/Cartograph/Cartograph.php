@@ -31,9 +31,19 @@ class Cartograph
 	 * @param callable|null $c
 	 * @return Cartograph
 	 */
-	public function add($item, ?string $value = null, ?callable  $c = null): Cartograph
+	public function add($item, ?string $value = null, ?callable $c = null): Cartograph
 	{
 		$this->scanner->add($item, $value, $c);
+		return $this;
+	}
+	
+	/**
+	 * @param string[]|string $path
+	 * @return Cartograph
+	 */
+	public function addDir(... $path): Cartograph
+	{
+		// TODO: 
 		return $this;
 	}
 	
