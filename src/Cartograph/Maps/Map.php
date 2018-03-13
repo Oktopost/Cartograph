@@ -7,14 +7,28 @@ use Cartograph\Base\IMap;
 
 class Map implements IMap
 {
+	/**
+	 * @var MapCollection
+	 */
+	private $collection;
+	
+	private $from;
+	
+	private $to;
+	
+	private $keepIndexes = false;
+	
+	
 	public function __construct(MapCollection $collection)
 	{
-		
+		$this->collection = $collection;
 	}
 	
 	public function from($source): IMap
 	{
-		// TODO: Implement from() method.
+		$this->from = $source;
+		
+		return $this;
 	}
 	
 	public function fromArray(array $source): IMap
@@ -29,7 +43,8 @@ class Map implements IMap
 	
 	public function keepIndexes(): IMap
 	{
-		// TODO: Implement keepIndexes() method.
+		$this->keepIndexes = true;
+		return $this;
 	}
 	
 	/**
@@ -38,6 +53,6 @@ class Map implements IMap
 	 */
 	public function into(string $target)
 	{
-		// TODO: Implement into() method.
+		$this->to = $target;
 	}
 }

@@ -2,7 +2,6 @@
 namespace Cartograph\Scanners;
 
 
-use Cartograph\Base\IMapSource;
 use Cartograph\Maps\MapCollection;
 
 

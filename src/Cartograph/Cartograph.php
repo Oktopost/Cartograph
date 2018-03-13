@@ -4,7 +4,6 @@ namespace Cartograph;
 
 use Cartograph\Maps\Map;
 use Cartograph\Base\IMap;
-use Cartograph\Base\IMapSource;
 use Cartograph\Scanners\ScanManager;
 
 
@@ -26,14 +25,12 @@ class Cartograph
 	
 	
 	/**
-	 * @param IMapSource|string $item
-	 * @param string|null $value
-	 * @param callable|null $c
+	 * @param object|string $item
 	 * @return Cartograph
 	 */
-	public function add($item, ?string $value = null, ?callable $c = null): Cartograph
+	public function addClass($item): Cartograph
 	{
-		$this->scanner->add($item, $value, $c);
+		$this->scanner->add($item);
 		return $this;
 	}
 	
@@ -43,7 +40,7 @@ class Cartograph
 	 */
 	public function addDir(... $path): Cartograph
 	{
-		// TODO: 
+		$this->scanner->addDir(...$path);
 		return $this;
 	}
 	
