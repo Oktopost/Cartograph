@@ -39,31 +39,26 @@ class MapCollection
 		};
 	}
 	
-	private function checkCollectionForDuplicates(string $key, $bulk = false): void
+	private function checkCollectionForDuplicates(string $from, string $to, $bulk = false): void
 	{
-		$hasKey	= $bulk ? isset($this->collection[$key]) : isset($this->bulkCollection[$key]);
+		$key	= $this->getKey($from, $to);
+		$hasKey	= $bulk ? isset($this->bulkCollection[$key]) : isset($this->collection[$key]);
 		
 		if ($hasKey)
-			throw new MapperAlreadyExistsException($key);
+			throw new MapperAlreadyExistsException($from, $to);
 	}
 	
 	public function add(string $from, string $to, callable $action): MapCollection
 	{
-		$key = $this->getKey($from, $to);
-		
-		$this->checkCollectionForDuplicates($key);
-		$this->collection[$key] = $action;
-		
+		$this->checkCollectionForDuplicates($from, $to, false);
+		$this->collection[$this->getKey($from, $to)] = $action;
 		return $this;
 	}
 	
 	public function addBulk(string $from, string $to, callable $action): MapCollection
 	{
-		$key = $this->getKey($from, $to);
-		
-		$this->checkCollectionForDuplicates($key, true);
-		$this->bulkCollection[$key] = $action;
-		
+		$this->checkCollectionForDuplicates($from, $to, true);
+		$this->bulkCollection[$this->getKey($from, $to)] = $action;
 		return $this;
 	}
 	
@@ -84,8 +79,8 @@ class MapCollection
 	
 	public function merge(MapCollection $collection): void
 	{
-		$this->collection		=array_merge($this->collection, $collection->collection);
-		$this->bulkCollection	=array_merge($this->bulkCollection, $collection->bulkCollection);
+		$this->collection		= array_merge($this->collection, $collection->collection);
+		$this->bulkCollection	= array_merge($this->bulkCollection, $collection->bulkCollection);
 	}
 	
 	public function countBulk(): int

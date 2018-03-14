@@ -2,12 +2,10 @@
 namespace Cartograph\Exceptions;
 
 
-class MapperAlreadyExistsException extends \Exception
+class MapperAlreadyExistsException extends CartographException
 {
-	public function __construct(string $key)
+	public function __construct(string $from, string $to)
 	{
-		$msg = "Key $key already exists in collection";
-		
-		parent::__construct($msg);
+		parent::__construct("Mapper from $from to $to already defined");
 	}
 }
