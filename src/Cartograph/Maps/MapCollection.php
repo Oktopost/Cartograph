@@ -4,18 +4,17 @@ namespace Cartograph\Maps;
 
 class MapCollection
 {
-	/**
-	 * @var array
-	 */
-	private $collection;
+	/** @var array */
+	private $collection = [];
 	
-	/**
-	 * @var array
-	 */
-	private $bulkCollection;
+	/** @var array */
+	private $bulkCollection = [];
 	
-	private $isBulk = false;
 	
+	private function getKey($from, $to): string
+	{
+		return $from . '|' . $to;
+	} 
 	
 	private function bulkEmptyFallback(string $from, string $to): ?callable
 	{
@@ -38,34 +37,26 @@ class MapCollection
 	}
 	
 	
-	public function __clone()
-	{
-		
-	}
-	
-	
 	public function add(string $from, string $to, callable $action): MapCollection
 	{
-		$this->collection[$from . $to] = $action;
-		
+		$this->collection[$this->getKey($from, $to)] = $action;
 		return $this;
 	}
 	
 	public function addBulk(string $from, string $to, callable $action): MapCollection
 	{
-		$this->bulkCollection[$from . $to] = $action;
-		
+		$this->bulkCollection[$this->getKey($from, $to)] = $action;
 		return $this;
 	}
 	
 	public function get(string $from, string $to): ?callable 
 	{
-		return $this->collection[$from . $to] ?? null;
+		return $this->collection[$this->getKey($from, $to)] ?? null;
 	}
 	
 	public function getBulk(string $from, string $to): ?callable 
 	{
-		$key = $from . $to;
+		$key = $this->getKey($from, $to);
 		
 		if (isset($this->bulkCollection[$key]))
 			return $this->bulkCollection[$key];
@@ -75,16 +66,22 @@ class MapCollection
 	
 	public function merge(MapCollection $collection): void
 	{
-		$this->isBulk ? array_merge($this->bulkCollection, $collection) : array_merge($this->collection, $collection);
+		$this->collection		=array_merge($this->collection, $collection->collection);
+		$this->bulkCollection	=array_merge($this->bulkCollection, $collection->bulkCollection);
 	}
 	
-	public function count(): int
+	public function countBulk(): int
 	{
-		return $this->isBulk ? count($this->bulkCollection) : count($this->collection);
+		return count($this->bulkCollection);
+	}
+	
+	public function countNonBulk(): int
+	{
+		return count($this->collection);
 	}
 	
 	public function isEmpty(): bool
 	{
-		return $this->isBulk ? empty($this->bulkCollection) : empty($this->collection);
+		return empty($this->bulkCollection) && empty($this->collection);
 	}
 }

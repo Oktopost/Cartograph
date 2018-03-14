@@ -7,14 +7,10 @@ use Cartograph\Base\IMap;
 
 class Map implements IMap
 {
-	/**
-	 * @var MapCollection
-	 */
+	/** @var MapCollection */
 	private $collection;
 	
 	private $from;
-	
-	private $to;
 	
 	private $keepIndexes = false;
 	
@@ -53,6 +49,6 @@ class Map implements IMap
 	 */
 	public function into(string $target)
 	{
-		$this->to = $target;
+		
 	}
 }
