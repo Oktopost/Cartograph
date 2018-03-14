@@ -2,6 +2,9 @@
 namespace Cartograph\Maps;
 
 
+use Cartograph\Exceptions\MapperAlreadyExistsException;
+
+
 class MapCollection
 {
 	/** @var array */
@@ -36,16 +39,31 @@ class MapCollection
 		};
 	}
 	
+	private function checkCollectionForDuplicates(string $key, $bulk = false): void
+	{
+		$hasKey	= $bulk ? isset($this->collection[$key]) : isset($this->bulkCollection[$key]);
+		
+		if ($hasKey)
+			throw new MapperAlreadyExistsException($key);
+	}
 	
 	public function add(string $from, string $to, callable $action): MapCollection
 	{
-		$this->collection[$this->getKey($from, $to)] = $action;
+		$key = $this->getKey($from, $to);
+		
+		$this->checkCollectionForDuplicates($key);
+		$this->collection[$key] = $action;
+		
 		return $this;
 	}
 	
 	public function addBulk(string $from, string $to, callable $action): MapCollection
 	{
-		$this->bulkCollection[$this->getKey($from, $to)] = $action;
+		$key = $this->getKey($from, $to);
+		
+		$this->checkCollectionForDuplicates($key, true);
+		$this->bulkCollection[$key] = $action;
+		
 		return $this;
 	}
 	
