@@ -95,6 +95,6 @@ class MapCollection
 	
 	public function isEmpty(): bool
 	{
-		return empty($this->bulkCollection) && empty($this->collection);
+		return !$this->bulkCollection && !$this->collection;
 	}
 }

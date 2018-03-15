@@ -23,11 +23,9 @@ class ScanManager
 	
 	
 	/**
-	 * @param IMapSource|string $item
-	 * @param string|null $value
-	 * @param callable|null $c
+	 * @param object|string $item
 	 */
-	public function add($item, ?string $value = null, ?callable  $c = null): void
+	public function add($item): void
 	{
 		
 	}
