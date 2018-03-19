@@ -3,14 +3,14 @@ namespace Cartograph\Maps;
 
 
 use Cartograph\Base\IMap;
-use Cartograph\Exceptions\InvalidMapperSource;
+use Cartograph\Exceptions\CartographException;
 
 
 class Map implements IMap
 {
 	private const ONE_ITEM				= 1;
-	private const SERIES_OF_SAME_ITEM	= 2;
-	private const SERIES_OF_ANY_ITEM	= 3;
+	private const SERIES_OF_SAME_ITEMS	= 2;
+	private const SERIES_OF_ANY_ITEMS	= 3;
 	
 	
 	/** @var MapCollection */
@@ -18,27 +18,37 @@ class Map implements IMap
 	/** @var array|object */
 	private $payload;
 	
-	private $from;
+	private $sourceName;
 	private $keepIndexes = false;
 	private $mapCase;
 	
 	
+	private function getTypeName($source)
+	{
+		if (is_scalar($source))
+		{
+			return gettype($source);
+        }
+		else if ((is_array($source)))
+		{
+			return 'array';
+		}
+		else
+		{
+			return get_class($source);
+        }
+	}
+	
 	private function transformSource(string $target)
 	{
-		$callback = $this->collection->get($this->from, $target);
-		
-		if(!$callback)
-			return null;
+		$callback = $this->collection->get($this->sourceName, $target);
 		
 		return $callback($this->payload);
 	}
 	
 	private function transformSameItems(string $target)
 	{
-		$callback = $this->collection->getBulk($this->from, $target);
-		
-		if (!$callback)
-			return null;
+		$callback = $this->collection->getBulk($this->sourceName, $target);
 		
 		return $callback($this->payload);
 	}
@@ -47,13 +57,13 @@ class Map implements IMap
 	{
 		$res = [];
 		
+		if (!$this->keepIndexes)
+			$this->payload = array_values($this->payload);
+		
 		foreach ($this->payload as $key => $item)
 		{
-			$callback = $this->collection->get(get_class($item), $target);
-			if ($callback)
-			{
-				$this->keepIndexes ? $res[$key] = $callback($item) : $res[] = $callback($item); 
-			}
+			$callback	= $this->collection->get($this->getTypeName($item), $target);
+			$res[$key]	= $callback($item);
 		}
 		
 		return $res;
@@ -67,21 +77,18 @@ class Map implements IMap
 	
 	public function from($source): IMap
 	{
-		if ((is_string($source) && !class_exists($source)) || !is_object($source))
-			throw new InvalidMapperSource($source);
-			
-		$this->from		= is_string($source) ? $source : get_class($source);
-		$this->payload	= $source;
-		$this->mapCase	= self::ONE_ITEM;
+		$this->sourceName	= $this->getTypeName($source);
+		$this->payload		= $source;
+		$this->mapCase		= self::ONE_ITEM;
 		
 		return $this;
 	}
 	
 	public function fromArray(array $source): IMap
 	{
-		$this->from		= get_class($source[0]);
-		$this->payload	= $source;
-		$this->mapCase	= self::SERIES_OF_SAME_ITEM;
+		$this->sourceName	= $this->getTypeName($source[0]);
+		$this->payload		= $source;
+		$this->mapCase		= self::SERIES_OF_SAME_ITEMS;
 		
 		return $this;
 	}
@@ -89,7 +96,7 @@ class Map implements IMap
 	public function fromEach(array $source): IMap
 	{
 		$this->payload	= $source;
-		$this->mapCase	= self::SERIES_OF_ANY_ITEM;
+		$this->mapCase	= self::SERIES_OF_ANY_ITEMS;
 		
 		return $this;
 	}
@@ -108,10 +115,14 @@ class Map implements IMap
 	{
 		switch ($this->mapCase)
 		{
-			case self::ONE_ITEM :				return $this->transformSource($target);
-			case self::SERIES_OF_SAME_ITEM :	return $this->transformSameItems($target);
-			case self::SERIES_OF_ANY_ITEM :		return $this->transformAnyItems($target);
-			default:							return null;
+			case self::ONE_ITEM :
+				return $this->transformSource($target);
+			case self::SERIES_OF_SAME_ITEMS :
+				return $this->transformSameItems($target);
+			case self::SERIES_OF_ANY_ITEMS :
+				return $this->transformAnyItems($target);
+			default:
+				 throw new CartographException('Wrong map case');
 		}
 	}
 }

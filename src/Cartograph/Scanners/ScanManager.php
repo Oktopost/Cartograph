@@ -11,9 +11,9 @@ class ScanManager
 	private $collection;
 	
 	
-	public function __construct()
+	public function __construct(MapCollection $collection = null)
 	{
-		$this->collection = new MapCollection();
+		$this->collection = $collection ? $collection : new MapCollection();
 	}
 	
 	public function __clone()
@@ -21,13 +21,13 @@ class ScanManager
 		$this->collection = clone $this->collection;
 	}
 	
-	
 	/**
 	 * @param object|string $item
 	 */
-	public function add($item): void
+	public function addClass($item): void
 	{
-		
+		$item = is_object($item) ? get_class($item) : $item;
+		$this->collection->merge(ClassAnnotationScanner::scan($item));
 	}
 	
 	/**
@@ -35,9 +35,11 @@ class ScanManager
 	 */
 	public function addDir(...$path): void
 	{
-		
+		foreach ($path as $dir)
+		{
+			$this->collection->merge(RecursiveDirectoryScanner::scan($dir));
+		}
 	}
-	
 	
 	public function getCollection(): MapCollection
 	{

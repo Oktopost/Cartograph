@@ -1,5 +1,8 @@
 <?php
-namespace Cartograph\Exceptions;
+namespace Cartograph\Exceptions\Maps;
+
+
+use Cartograph\Exceptions\CartographException;
 
 
 class MapperAlreadyExistsException extends CartographException

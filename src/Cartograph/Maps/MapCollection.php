@@ -2,7 +2,8 @@
 namespace Cartograph\Maps;
 
 
-use Cartograph\Exceptions\MapperAlreadyExistsException;
+use Cartograph\Exceptions\Maps\MapperAlreadyExistsException;
+use Cartograph\Exceptions\Maps\MapperNotSetException;
 
 
 class MapCollection
@@ -19,12 +20,9 @@ class MapCollection
 		return $from . '|' . $to;
 	} 
 	
-	private function bulkEmptyFallback(string $from, string $to): ?callable
+	private function generateBulkFallback(string $from, string $to): ?callable
 	{
 		$single = $this->get($from, $to);
-		
-		if (!$single)
-			return null;
 		
 		return function (array $source) use ($single): array
 		{
@@ -64,6 +62,11 @@ class MapCollection
 	
 	public function get(string $from, string $to): ?callable 
 	{
+		$key = $this->getKey($from, $to);
+		
+		if (!isset($this->collection[$key]))
+			throw new MapperNotSetException($from, $to);
+		
 		return $this->collection[$this->getKey($from, $to)] ?? null;
 	}
 	
@@ -74,7 +77,7 @@ class MapCollection
 		if (isset($this->bulkCollection[$key]))
 			return $this->bulkCollection[$key];
 		
-		return $this->bulkEmptyFallback($from, $to);
+		return $this->generateBulkFallback($from, $to);
 	}
 	
 	public function merge(MapCollection $collection): void

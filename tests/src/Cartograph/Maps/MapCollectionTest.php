@@ -2,7 +2,8 @@
 namespace Cartograph\Maps;
 
 
-use Cartograph\Exceptions\MapperAlreadyExistsException;
+use Cartograph\Exceptions\Maps\MapperAlreadyExistsException;
+use Cartograph\Exceptions\Maps\MapperNotSetException;
 use PHPUnit\Framework\TestCase;
 
 
@@ -54,11 +55,11 @@ class MapCollectionTest extends TestCase
 		$mapCollection->addBulk('A', 'B', function () {});
 	}
 	
-	public function test_getBulk_withNothingAddedAndNoFallback_returnsNull()
+	public function test_getBulk_withNothingAddedAndNoFallback_throwsException()
 	{
+		$this->expectException(MapperNotSetException::class);
 		$mapCollection = new MapCollection();
-		
-		$this->assertNull($mapCollection->getBulk('A', 'B'));
+		$mapCollection->getBulk('A', 'B');
 	}
 	
 	public function test_getBulk_withNothingAddedToBulkAndFallbackDefined_returnsFallbackFunction()
