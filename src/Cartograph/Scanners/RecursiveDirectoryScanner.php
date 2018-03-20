@@ -2,7 +2,6 @@
 namespace Cartograph\Scanners;
 
 
-use Itarator\IConsumer;
 use Itarator\Filters\PHPFileFilter;
 
 use Cartograph\Base\IMapper;
@@ -29,11 +28,10 @@ class RecursiveDirectoryScanner
 	}
 	
 	
-	public static function scan(string $dir, IConsumer $consumer = null): MapCollection
+	public static function scan(string $dir): MapCollection
 	{
 		$iterator = new \Itarator();
-		$consumer = $consumer ? $consumer : new FileConsumer();
-		
+		$consumer = new FileConsumer();
 		
 		$iterator->setFileFilter(new PHPFileFilter());
 		$iterator->setRootDirectory($dir);

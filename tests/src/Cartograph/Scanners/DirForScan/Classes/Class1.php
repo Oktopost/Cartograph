@@ -1,7 +1,7 @@
 <?php
 namespace TestZdir;
 
-class TestZDir implements \Cartograph\Base\IMapper
+class Class1 implements \Cartograph\Base\IMapper
 {
 	/**
 	 * @map

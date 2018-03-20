@@ -11,9 +11,9 @@ class ClassAnnotationScannerTest extends TestCase
 	public function test_scan_withProperClass_returnsNotEmptyMapCollection()
 	{
 		$scanManager = new ScanManager();
-		$scanManager->addDir(__DIR__.'/../TempTestDir');
+		$scanManager->addDir(__DIR__ . '/DirForScan/Classes');
 		
-		$mapCollection = ClassAnnotationScanner::scan('Some');
+		$mapCollection = ClassAnnotationScanner::scan('Class2');
 		$this->assertFalse($mapCollection->isEmpty());
 	}
 }

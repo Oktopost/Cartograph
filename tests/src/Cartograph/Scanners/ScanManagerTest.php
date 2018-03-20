@@ -22,7 +22,7 @@ class ScanManagerTest extends TestCase
 		$mapCollection = $this->createMock(MapCollection::class);
 		$mapCollection->expects($this->once())->method('merge');
 		$scanner = new ScanManager($mapCollection);
-		$scanner->addDir(__DIR__.'/../TempTestDir');
+		$scanner->addDir(__DIR__ . '/DirForScan/Classes');
 	}
 	
 	public function test_getCollection_returnMapCollection()

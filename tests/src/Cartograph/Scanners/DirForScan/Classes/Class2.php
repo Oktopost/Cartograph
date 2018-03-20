@@ -3,7 +3,7 @@
 use Cartograph\Base\IMapper;
 
 
-class Some implements IMapper
+class Class2 implements IMapper
 {
 	/**
 	 * @map
