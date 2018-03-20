@@ -1,6 +1,9 @@
 <?php
 
-class Some implements \Cartograph\Base\IMapper
+use Cartograph\Base\IMapper;
+
+
+class Some implements IMapper
 {
 	/**
 	 * @map

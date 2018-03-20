@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: maksymlaktionov
- * Date: 3/19/18
- * Time: 6:36 PM
- */
 namespace Cartograph\Scanners;
 
 
@@ -26,9 +20,9 @@ class ScanManagerTest extends TestCase
 	public function testAddDir()
 	{
 		$mapCollection = $this->createMock(MapCollection::class);
-		$mapCollection->expects($this->exactly(2))->method('merge');
+		$mapCollection->expects($this->once())->method('merge');
 		$scanner = new ScanManager($mapCollection);
-		$scanner->addDir('1', '2');
+		$scanner->addDir(__DIR__.'/../TempTestDir');
 	}
 	
 	public function test_getCollection_returnMapCollection()
@@ -36,5 +30,14 @@ class ScanManagerTest extends TestCase
 		$mapCollection = new MapCollection();
 		$scanner = new ScanManager($mapCollection);
 		$this->assertEquals($mapCollection, $scanner->getCollection());
+	}
+	
+	public function test_clone_returnMapCollection()
+	{
+		$mapCollection = new MapCollection();
+		$scanner = new ScanManager($mapCollection);
+		$scannerClone = clone $scanner;
+		
+		$this->assertEquals($scanner, $scannerClone);
 	}
 }

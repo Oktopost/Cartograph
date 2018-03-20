@@ -30,7 +30,7 @@ class Cartograph
 	 */
 	public function addClass($item): Cartograph
 	{
-		$this->scanner->add($item);
+		$this->scanner->addClass($item);
 		return $this;
 	}
 	

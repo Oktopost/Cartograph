@@ -2,20 +2,16 @@
 namespace Cartograph\Scanners;
 
 
-use Cartograph\Exceptions\Scanners\DirectoryScannerException;
 use Itarator\IConsumer;
 use Itarator\Filters\PHPFileFilter;
 
 use Cartograph\Base\IMapper;
 use Cartograph\Maps\MapCollection;
+use Cartograph\Exceptions\Scanners\DirectoryScannerException;
 
 
-class RecursiveDirectoryScanner implements IConsumer
+class RecursiveDirectoryScanner
 {
-	private static $root; 
-	private static $exceptions;
-	
-	
 	private static function findMapperFunctions(array $classes): MapCollection
 	{
 		$mapCollection = new MapCollection();
@@ -32,43 +28,30 @@ class RecursiveDirectoryScanner implements IConsumer
 		return $mapCollection;
 	}
 	
-	public static function scan(string $dir): MapCollection
+	
+	public static function scan(string $dir, IConsumer $consumer = null): MapCollection
 	{
 		$iterator = new \Itarator();
+		$consumer = $consumer ? $consumer : new FileConsumer();
+		
 		
 		$iterator->setFileFilter(new PHPFileFilter());
 		$iterator->setRootDirectory($dir);
-		$iterator->setFileConsumer(new self());
+		$iterator->setFileConsumer($consumer);
 		
-		self::$root  = $iterator->getConfig()->RootDir;
+		$consumer->setRoot($iterator->getConfig()->RootDir);
 		
 		$classesBeforeScan = get_declared_classes();
 		
 		$iterator->execute();
 		
-		if (self::$exceptions)
-			throw new DirectoryScannerException(self::$exceptions, self::$root);
+		if ($consumer->getExceptions())
+		{
+			throw new DirectoryScannerException($consumer->getExceptions(), $iterator->getConfig()->RootDir);
+		}
 		
 		$classesAfterScan = array_diff(get_declared_classes(), $classesBeforeScan);
 		
 		return self::findMapperFunctions($classesAfterScan);
-	}
-	
-	/**
-	 * @param string $path
-	 */
-	public function consume($path)
-	{
-		try
-		{
-			$root = self::$root;
-			
-			/** @noinspection PhpIncludeInspection */
-			require_once "$root/$path";
-		}
-		catch (\Throwable $t)
-		{
-			self::$exceptions[] = $t;
-		}
 	}
 }
