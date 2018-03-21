@@ -7,6 +7,7 @@ use Itarator\IConsumer;
 
 class FileConsumer implements IConsumer
 {
+	/** @var \Throwable[] */
 	private $exceptions = []; 
 	private $root; 
 	
@@ -32,6 +33,9 @@ class FileConsumer implements IConsumer
 		$this->root = $root;
 	}
 	
+	/**
+	 * @return \Throwable[]
+	 */
 	public function getExceptions(): array 
 	{
 		return $this->exceptions; 

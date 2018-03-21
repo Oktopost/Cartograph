@@ -11,6 +11,8 @@ use Cartograph\Exceptions\Scanners\DirectoryScannerException;
 
 class RecursiveDirectoryScanner
 {
+	private static $dir; 
+	
 	private static function findMapperFunctions(array $classes): MapCollection
 	{
 		$mapCollection = new MapCollection();
@@ -19,17 +21,20 @@ class RecursiveDirectoryScanner
 		{
 			$ref = new \ReflectionClass($class);
 			
-			if ($ref->implementsInterface(IMapper::class))
+			if (strpos($ref->getNamespaceName(), self::$dir) !== false && $ref->implementsInterface(IMapper::class))
 			{
 				$mapCollection->merge(ClassAnnotationScanner::scan($class));
 			}
 		}
+		
 		return $mapCollection;
 	}
 	
 	
 	public static function scan(string $dir): MapCollection
 	{
+		self::$dir = $dir;
+		
 		$iterator = new \Itarator();
 		$consumer = new FileConsumer();
 		
@@ -39,17 +44,11 @@ class RecursiveDirectoryScanner
 		
 		$consumer->setRoot($iterator->getConfig()->RootDir);
 		
-		$classesBeforeScan = get_declared_classes();
-		
 		$iterator->execute();
 		
 		if ($consumer->getExceptions())
-		{
 			throw new DirectoryScannerException($consumer->getExceptions(), $iterator->getConfig()->RootDir);
-		}
 		
-		$classesAfterScan = array_diff(get_declared_classes(), $classesBeforeScan);
-		
-		return self::findMapperFunctions($classesAfterScan);
+		return self::findMapperFunctions(get_declared_classes());
 	}
 }

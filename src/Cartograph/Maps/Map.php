@@ -4,6 +4,7 @@ namespace Cartograph\Maps;
 
 use Cartograph\Base\IMap;
 use Cartograph\Exceptions\CartographException;
+use Cartograph\Exceptions\Maps\MapEmptyArgException;
 
 
 class Map implements IMap
@@ -15,6 +16,7 @@ class Map implements IMap
 	
 	/** @var MapCollection */
 	private $collection;
+	
 	/** @var array|object */
 	private $payload;
 	
@@ -28,7 +30,7 @@ class Map implements IMap
 		if (is_scalar($source))
 		{
 			return gettype($source);
-        }
+		}
 		else if ((is_array($source)))
 		{
 			return 'array';
@@ -36,7 +38,7 @@ class Map implements IMap
 		else
 		{
 			return get_class($source);
-        }
+		}
 	}
 	
 	private function transformSource(string $target)
@@ -49,8 +51,12 @@ class Map implements IMap
 	private function transformSameItems(string $target)
 	{
 		$callback = $this->collection->getBulk($this->sourceName, $target);
+		$response = $callback(array_values($this->payload));
 		
-		return $callback($this->payload);
+		if ($this->keepIndexes)
+			return array_combine(array_keys($this->payload),$response);
+		else
+			return $callback($this->payload);
 	}
 	
 	private function transformAnyItems(string $target)
@@ -86,7 +92,10 @@ class Map implements IMap
 	
 	public function fromArray(array $source): IMap
 	{
-		$this->sourceName	= $this->getTypeName($source[0]);
+		if(!$source)
+			throw new MapEmptyArgException();
+		
+		$this->sourceName	= $this->getTypeName(reset($source));
 		$this->payload		= $source;
 		$this->mapCase		= self::SERIES_OF_SAME_ITEMS;
 		

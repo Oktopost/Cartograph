@@ -3,15 +3,14 @@ namespace Cartograph\Scanners;
 
 
 use Annotation\Flag;
-use Annotation\Value;
+use Cartograph\Cartograph;
 use Cartograph\Maps\MapCollection;
+use Cartograph\Exceptions\Scanners\WrongArgumentException;
 
 
 class ClassAnnotationScanner
 {
-	private const MAPPER_MEHTOD	= 'map';
-	private const SOURCE		= 'mapperSource';
-	private const TARGET		= 'mapperTarget';
+	private const MAPPER_METHOD	= 'map';
 	
 	
 	public static function scan(string $className): MapCollection
@@ -24,14 +23,24 @@ class ClassAnnotationScanner
 		
 		foreach ($methods as $method)
 		{
-			if ($method->isStatic() && Flag::hasFlag($method, self::MAPPER_MEHTOD))
+			if ($method->isStatic() && !$method->isAbstract() && Flag::hasFlag($method, self::MAPPER_METHOD))
 			{
-				$method = $method->class . '::' . $method->name;
+				$params	= $method->getParameters();
+				$paramsCount = count($params);
 				
-				$source = Value::getValue($method, self::SOURCE);
-				$target = Value::getValue($method, self::TARGET);
+				if (!$paramsCount ||
+					$paramsCount > 2 ||
+					!$method->getReturnType() || 
+					($paramsCount==2 && !($params[1] instanceof Cartograph))
+				)
+					throw new WrongArgumentException($className, $method->name);
 				
-				$mapCollection->add($source, $target, $method);
+				
+				$mapCollection->add(
+					$params[0]->getType(), 
+					$method->getReturnType(), 
+					$method->class . '::' . $method->name
+				);
 			}
 		}
 		

@@ -3,6 +3,7 @@ namespace Cartograph\Maps;
 
 
 use Cartograph\Exceptions\CartographException;
+use Cartograph\Exceptions\Maps\MapEmptyArgException;
 use PHPUnit\Framework\TestCase;
 
 
@@ -56,6 +57,13 @@ class MapTest extends TestCase
 		$this->assertEquals('stdClass', $property->getValue($map));
 	}
 	
+	public function test_fromArray_withEmptyArray_definesSourceNameByFirstItem()
+	{
+		$this->expectException(MapEmptyArgException::class);
+		$map = new Map(new MapCollection());
+		$map->fromArray([]);
+	}
+	
 	public function test_fromEach_withArraySet_definesMapCaseAsSeriesOfAnyItems()
 	{
 		$map = new Map(new MapCollection());
@@ -97,6 +105,15 @@ class MapTest extends TestCase
 		
 		$map = new Map($stub);
 		$this->assertEquals([1,2] ,$map->fromArray([1,2])->into('B'));
+	}
+	
+	public function test_into_withSeriesOfSameItemsAndKeepIndexes_returnsTransformedWithOriginKeys()
+	{
+		$stub = $this->createMock(MapCollection::class);
+		$stub->method('getBulk')->willReturn(function (array $items) { return $items;});
+		
+		$map = new Map($stub);
+		$this->assertEquals(['a'=>1,'b'=>2] ,$map->keepIndexes()->fromArray(['a'=>1,'b'=>2])->into('B'));
 	}
 	
 	public function test_into_withSeriesOfAnyItemsAndKeepIndexFlag_returnsTransformedAndKeepKeys()

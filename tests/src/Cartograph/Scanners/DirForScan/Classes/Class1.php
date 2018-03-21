@@ -1,12 +1,14 @@
 <?php
-namespace TestZdir;
+namespace Cartograph\Scanners\DirForScan\Classes;
 
-class Class1 implements \Cartograph\Base\IMapper
+
+use Cartograph\Base\IMapper;
+
+
+class Class1 implements IMapper
 {
 	/**
 	 * @map
-	 * @mapperSource array
-	 * @mapperTarget int
 	 */
 	public static function test(array $b): int
 	{

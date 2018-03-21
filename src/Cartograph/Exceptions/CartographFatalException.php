@@ -2,7 +2,7 @@
 namespace Cartograph\Exceptions;
 
 
-class CartographFatalException extends CartographError
+class CartographFatalException extends \Error
 { 
 	
 }
