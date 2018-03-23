@@ -21,7 +21,9 @@ class RecursiveDirectoryScanner
 		{
 			$ref = new \ReflectionClass($class);
 			
-			if (strpos($ref->getNamespaceName(), self::$dir) !== false && $ref->implementsInterface(IMapper::class))
+			$classPath = str_replace("\\", '/', $ref->getNamespaceName());
+			
+			if ($classPath && strpos(self::$dir, $classPath) !== false && $ref->implementsInterface(IMapper::class))
 			{
 				$mapCollection->merge(ClassAnnotationScanner::scan($class));
 			}
