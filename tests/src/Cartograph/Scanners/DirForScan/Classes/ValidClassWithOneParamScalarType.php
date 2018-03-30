@@ -5,7 +5,7 @@ namespace Cartograph\Scanners\DirForScan\Classes;
 use Cartograph\Base\IMapper;
 
 
-class Class2 implements IMapper
+class ValidClassWithOneParamScalarType implements IMapper
 {
 	/**
 	 * @map

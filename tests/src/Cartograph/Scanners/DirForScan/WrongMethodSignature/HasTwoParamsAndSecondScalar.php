@@ -5,7 +5,7 @@ namespace Cartograph\Scanners\DirForScan\WrongMethodSignature;
 use Cartograph\Base\IMapper;
 
 
-class HasTwoParamsAndSecondNotCartograph implements IMapper
+class HasTwoParamsAndSecondScalar implements IMapper
 {
 	/**
 	 * @map

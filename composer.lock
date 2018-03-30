@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "edf5ce2043543df1ad7fae0b05d0cf01",
+    "content-hash": "5e7f0a3d027cebaabc3e9a574441c781",
     "packages": [
         {
             "name": "oktopost/annotation",
@@ -128,6 +128,47 @@
                 }
             ],
             "time": "2017-08-02T08:53:12+00:00"
+        },
+        {
+            "name": "unstable-cacao/structura",
+            "version": "1.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/unstable-cacao/Structura.git",
+                "reference": "5908c401bdfed7bbd8a90ce75337b845289e49ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/unstable-cacao/Structura/zipball/5908c401bdfed7bbd8a90ce75337b845289e49ca",
+                "reference": "5908c401bdfed7bbd8a90ce75337b845289e49ca",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.2",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Structura": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexey Puchkov",
+                    "email": "alexey.pkv@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "homepage": "https://github.com/unstable-cacao/Structura",
+            "time": "2017-11-28T07:21:48+00:00"
         },
         {
             "name": "unstable-cacao/traitor",
