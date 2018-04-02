@@ -51,7 +51,7 @@ class Cartograph
 	public function map($source = null): IMap
 	{
 		/** @var IMap $m */
-		$m = new Map($this->scanner->getCollection());
+		$m = new Map($this->scanner->getCollection(), $this);
 		
 		if (is_array($source))
 			$m->fromArray($source);

@@ -2,6 +2,7 @@
 namespace Cartograph\Maps;
 
 
+use Cartograph\Cartograph;
 use Cartograph\Exceptions\CartographException;
 use Cartograph\Exceptions\Maps\MapEmptyArgException;
 use PHPUnit\Framework\TestCase;
@@ -11,7 +12,7 @@ class MapTest extends TestCase
 {
 	public function test_from_withScalarSource_definesSourceNameAsScalar()
 	{
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->from('test');
 		
 		$reflection	= new \ReflectionClass($map);
@@ -23,7 +24,7 @@ class MapTest extends TestCase
 	
 	public function test_from_withArraySource_definesSourceNameAsArray()
 	{
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->from([]);
 		
 		$reflection	= new \ReflectionClass($map);
@@ -35,7 +36,7 @@ class MapTest extends TestCase
 	
 	public function test_from_withObjectSource_definesSourceNameClassName()
 	{
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->from(new \stdClass());
 		
 		$reflection	= new \ReflectionClass($map);
@@ -47,7 +48,7 @@ class MapTest extends TestCase
 	
 	public function test_fromArray_withArraySet_definesSourceNameByFirstItem()
 	{
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->fromArray([new \stdClass(), new \stdClass()]);
 		
 		$reflection	= new \ReflectionClass($map);
@@ -60,13 +61,13 @@ class MapTest extends TestCase
 	public function test_fromArray_withEmptyArray_definesSourceNameByFirstItem()
 	{
 		$this->expectException(MapEmptyArgException::class);
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->fromArray([]);
 	}
 	
 	public function test_fromEach_withArraySet_definesMapCaseAsSeriesOfAnyItems()
 	{
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->fromEach([new \stdClass(),1,2,'test']);
 		
 		$reflection	= new \ReflectionClass($map);
@@ -79,7 +80,7 @@ class MapTest extends TestCase
 	
 	public function test_keepIndexes_calling_setFlagToTrue()
 	{
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->keepIndexes();
 		
 		$reflection	= new \ReflectionClass($map);
@@ -94,7 +95,7 @@ class MapTest extends TestCase
 		$stub = $this->createMock(MapCollection::class);
 		$stub->method('get')->willReturn(function ($item) { return $item;});
 		
-		$map = new Map($stub);
+		$map = new Map($stub, new Cartograph());
 		$this->assertEquals('A' ,$map->from('A')->into('B'));
 	}
 	
@@ -103,7 +104,7 @@ class MapTest extends TestCase
 		$stub = $this->createMock(MapCollection::class);
 		$stub->method('getBulk')->willReturn(function (array $items) { return $items;});
 		
-		$map = new Map($stub);
+		$map = new Map($stub, new Cartograph());
 		$this->assertEquals([1,2] ,$map->fromArray([1,2])->into('B'));
 	}
 	
@@ -112,7 +113,7 @@ class MapTest extends TestCase
 		$stub = $this->createMock(MapCollection::class);
 		$stub->method('getBulk')->willReturn(function (array $items) { return $items;});
 		
-		$map = new Map($stub);
+		$map = new Map($stub, new Cartograph());
 		$this->assertEquals(['a'=>1,'b'=>2] ,$map->keepIndexes()->fromArray(['a'=>1,'b'=>2])->into('B'));
 	}
 	
@@ -121,7 +122,7 @@ class MapTest extends TestCase
 		$stub = $this->createMock(MapCollection::class);
 		$stub->method('get')->willReturn(function ($item) { return $item;});
 		
-		$map = new Map($stub);
+		$map = new Map($stub, new Cartograph());
 		$this->assertEquals(['a'=>1,'b'=>2] ,$map->fromEach(['a'=>1,'b'=>2])->keepIndexes()->into('B'));
 	}
 	
@@ -130,7 +131,7 @@ class MapTest extends TestCase
 		$stub = $this->createMock(MapCollection::class);
 		$stub->method('get')->willReturn(function ($item) { return $item;});
 		
-		$map = new Map($stub);
+		$map = new Map($stub, new Cartograph());
 		$this->assertEquals([1,2] ,$map->fromEach(['a'=>1,'b'=>2])->into('B'));
 	}
 	
@@ -138,7 +139,7 @@ class MapTest extends TestCase
 	{
 		$this->expectException(CartographException::class);
 		
-		$map = new Map(new MapCollection());
+		$map = new Map(new MapCollection(), new Cartograph());
 		$map->into('B');
 	}
 }

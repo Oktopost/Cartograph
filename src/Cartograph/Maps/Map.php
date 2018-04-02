@@ -3,6 +3,7 @@ namespace Cartograph\Maps;
 
 
 use Cartograph\Base\IMap;
+use Cartograph\Cartograph;
 use Cartograph\Exceptions\CartographException;
 use Cartograph\Exceptions\Maps\MapEmptyArgException;
 
@@ -13,6 +14,9 @@ class Map implements IMap
 	private const SERIES_OF_SAME_ITEMS	= 2;
 	private const SERIES_OF_ANY_ITEMS	= 3;
 	
+	
+	/** @var Cartograph */
+	private $cartograph;
 	
 	/** @var MapCollection */
 	private $collection;
@@ -45,7 +49,7 @@ class Map implements IMap
 	{
 		$callback = $this->collection->get($this->sourceName, $target);
 		
-		return $callback($this->payload);
+		return $callback($this->payload, $this->cartograph);
 	}
 	
 	private function transformSameItems(string $target)
@@ -56,7 +60,7 @@ class Map implements IMap
 		if ($this->keepIndexes)
 			return array_combine(array_keys($this->payload),$response);
 		else
-			return $callback($this->payload);
+			return $callback($this->payload, $this->cartograph);
 	}
 	
 	private function transformAnyItems(string $target)
@@ -69,16 +73,17 @@ class Map implements IMap
 		foreach ($this->payload as $key => $item)
 		{
 			$callback	= $this->collection->get($this->getTypeName($item), $target);
-			$res[$key]	= $callback($item);
+			$res[$key]	= $callback($item,  $this->cartograph);
 		}
 		
 		return $res;
 	}
 	
 	
-	public function __construct(MapCollection $collection)
+	public function __construct(MapCollection $collection, Cartograph $cartograph)
 	{
 		$this->collection = $collection;
+		$this->cartograph = $cartograph;
 	}
 	
 	public function from($source): IMap

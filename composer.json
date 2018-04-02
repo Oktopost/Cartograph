@@ -1,14 +1,14 @@
 {
 	"name": "oktopost/cartograph",
 	"type": "library",
-	"license": "MIT",
 	"authors": [
 		{
 			"name": "Alexey Puchkov",
 			"email": "alexey@oktopost.com"
 		}
 	],
-    "require": {
+	"minimum-stability":"stable",
+	"require": {
 		"php": ">=7.1",
 		"oktopost/annotation": "^1.0",
 		"unstable-cacao/itarator": "^1.0",

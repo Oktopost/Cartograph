@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e7f0a3d027cebaabc3e9a574441c781",
+    "content-hash": "d4e312fcc29693e4b93f590587ce8d51",
     "packages": [
         {
             "name": "oktopost/annotation",
@@ -1918,7 +1918,7 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.36",
+            "version": "v2.8.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
