@@ -17,19 +17,6 @@ class ScanManagerTest extends TestCase
 		$scanner->addClass(\stdClass::class);
 	}
 	
-	public function test_addDir_withDir_willCallMergeMethodOfCollection()
-	{
-		$mapCollection = $this->createMock(MapCollection::class);
-		$mapCollection->expects($this->once())->method('merge');
-		try
-		{
-			$scanner = new ScanManager($mapCollection);
-			$scanner->addDir(__DIR__ . '/DirForScan/Classes');
-		} catch (\Exception $exception)
-		{
-		}
-	}
-	
 	public function test_getCollection_returnMapCollection()
 	{
 		$mapCollection = new MapCollection();
