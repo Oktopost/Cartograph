@@ -115,6 +115,18 @@ class Map implements IMap
 		return $this;
 	}
 	
+	public function getGroup(array $data, $key, ?callable $callback = null): array 
+	{
+		$result = [];
+		
+		foreach($data as $val) 
+		{
+			$result[$val[$key]][] = $callback ? $callback($val) : $val;
+		}
+		
+		return $result;
+	}
+	
 	public function keepIndexes(): IMap
 	{
 		$this->keepIndexes = true;

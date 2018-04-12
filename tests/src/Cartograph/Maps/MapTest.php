@@ -19,7 +19,7 @@ class MapTest extends TestCase
 		$property	= $reflection->getProperty('sourceName');
 		$property->setAccessible(true);
 		
-		$this->assertEquals('string', $property->getValue($map));
+		self::assertEquals('string', $property->getValue($map));
 	}
 	
 	public function test_from_withArraySource_definesSourceNameAsArray()
@@ -31,7 +31,7 @@ class MapTest extends TestCase
 		$property	= $reflection->getProperty('sourceName');
 		$property->setAccessible(true);
 		
-		$this->assertEquals('array', $property->getValue($map));
+		self::assertEquals('array', $property->getValue($map));
 	}
 	
 	public function test_from_withObjectSource_definesSourceNameClassName()
@@ -43,7 +43,7 @@ class MapTest extends TestCase
 		$property	= $reflection->getProperty('sourceName');
 		$property->setAccessible(true);
 		
-		$this->assertEquals('stdClass', $property->getValue($map));
+		self::assertEquals('stdClass', $property->getValue($map));
 	}
 	
 	public function test_fromArray_withArraySet_definesSourceNameByFirstItem()
@@ -55,12 +55,12 @@ class MapTest extends TestCase
 		$property	= $reflection->getProperty('sourceName');
 		$property->setAccessible(true);
 		
-		$this->assertEquals('stdClass', $property->getValue($map));
+		self::assertEquals('stdClass', $property->getValue($map));
 	}
 	
 	public function test_fromArray_withEmptyArray_definesSourceNameByFirstItem()
 	{
-		$this->expectException(MapEmptyArgException::class);
+		self::expectException(MapEmptyArgException::class);
 		$map = new Map(new MapCollection(), new Cartograph());
 		$map->fromArray([]);
 	}
@@ -75,7 +75,7 @@ class MapTest extends TestCase
 		$property->setAccessible(true);
 		$mapCaseConst = $reflection->getConstant('SERIES_OF_ANY_ITEMS');
 		
-		$this->assertEquals($mapCaseConst, $property->getValue($map));
+		self::assertEquals($mapCaseConst, $property->getValue($map));
 	}
 	
 	public function test_keepIndexes_calling_setFlagToTrue()
@@ -87,59 +87,99 @@ class MapTest extends TestCase
 		$property	= $reflection->getProperty('keepIndexes');
 		$property->setAccessible(true);
 		
-		$this->assertTrue($property->getValue($map));
+		self::assertTrue($property->getValue($map));
 	}
 	
 	public function test_into_withOneItem_callsTransformSource()
 	{
-		$stub = $this->createMock(MapCollection::class);
+		$stub = self::createMock(MapCollection::class);
 		$stub->method('get')->willReturn(function ($item) { return $item;});
 		
 		$map = new Map($stub, new Cartograph());
-		$this->assertEquals('A' ,$map->from('A')->into('B'));
+		self::assertEquals('A' ,$map->from('A')->into('B'));
 	}
 	
 	public function test_into_withSeriesOfSameItems_callsTransformSameItems()
 	{
-		$stub = $this->createMock(MapCollection::class);
+		$stub = self::createMock(MapCollection::class);
 		$stub->method('getBulk')->willReturn(function (array $items) { return $items;});
 		
 		$map = new Map($stub, new Cartograph());
-		$this->assertEquals([1,2] ,$map->fromArray([1,2])->into('B'));
+		self::assertEquals([1,2] ,$map->fromArray([1,2])->into('B'));
 	}
 	
 	public function test_into_withSeriesOfSameItemsAndKeepIndexes_returnsTransformedWithOriginKeys()
 	{
-		$stub = $this->createMock(MapCollection::class);
+		$stub = self::createMock(MapCollection::class);
 		$stub->method('getBulk')->willReturn(function (array $items) { return $items;});
 		
 		$map = new Map($stub, new Cartograph());
-		$this->assertEquals(['a'=>1,'b'=>2] ,$map->keepIndexes()->fromArray(['a'=>1,'b'=>2])->into('B'));
+		self::assertEquals(['a'=>1,'b'=>2] ,$map->keepIndexes()->fromArray(['a'=>1,'b'=>2])->into('B'));
 	}
 	
 	public function test_into_withSeriesOfAnyItemsAndKeepIndexFlag_returnsTransformedAndKeepKeys()
 	{
-		$stub = $this->createMock(MapCollection::class);
+		$stub = self::createMock(MapCollection::class);
 		$stub->method('get')->willReturn(function ($item) { return $item;});
 		
 		$map = new Map($stub, new Cartograph());
-		$this->assertEquals(['a'=>1,'b'=>2] ,$map->fromEach(['a'=>1,'b'=>2])->keepIndexes()->into('B'));
+		self::assertEquals(['a'=>1,'b'=>2] ,$map->fromEach(['a'=>1,'b'=>2])->keepIndexes()->into('B'));
 	}
 	
 	public function test_into_withSeriesOfAnyItems_returnsTransformedWithoutKeepingOriginKeys()
 	{
-		$stub = $this->createMock(MapCollection::class);
+		$stub = self::createMock(MapCollection::class);
 		$stub->method('get')->willReturn(function ($item) { return $item;});
 		
 		$map = new Map($stub, new Cartograph());
-		$this->assertEquals([1,2] ,$map->fromEach(['a'=>1,'b'=>2])->into('B'));
+		self::assertEquals([1,2] ,$map->fromEach(['a'=>1,'b'=>2])->into('B'));
 	}
 	
 	public function test_into_withNoMapCaseDefined_throwsException()
 	{
-		$this->expectException(CartographException::class);
+		self::expectException(CartographException::class);
 		
 		$map = new Map(new MapCollection(), new Cartograph());
 		$map->into('B');
+	}
+	
+	public function test_getGroup_withoutCallBack_willGroupByKey()
+	{
+		$map = new Map(new MapCollection(), new Cartograph());
+		
+		$data = [
+			['a' => 'b', 'c' => 'd'],
+			['a' => 'b', 'c' => 'e'],
+			['a' => 'c', 'c' => 'f']
+		];
+		
+		$expected = [
+			'b' => [
+				['a' => 'b', 'c' => 'd'],
+				['a' => 'b', 'c' => 'e']
+			],
+			'c' => [
+				['a' => 'c', 'c' => 'f']
+			]
+		];
+		
+		self::assertEquals($expected, $map->getGroup($data, 'a'));
+	}
+	
+	public function test_getGroup_withCallBack_willGroupByKeyAndApplyCallback()
+	{
+		$data = [
+			['a' => 'b', 'c' => 'd'],
+			['a' => 'b', 'c' => 'e'],
+			['a' => 'c', 'c' => 'f']
+		];
+		
+		$expected = [
+			'b' => [1,1],
+			'c' => [1]
+		];
+		$map = new Map(new MapCollection(), new Cartograph());
+		
+		self::assertEquals($expected, $map->getGroup($data, 'a', function () {return 1;}));
 	}
 }
