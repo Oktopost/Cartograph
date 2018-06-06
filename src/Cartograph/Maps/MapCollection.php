@@ -2,6 +2,7 @@
 namespace Cartograph\Maps;
 
 
+use Cartograph\Cartograph;
 use Cartograph\Exceptions\Maps\MapperAlreadyExistsException;
 use Cartograph\Exceptions\Maps\MapperNotSetException;
 
@@ -24,13 +25,13 @@ class MapCollection
 	{
 		$single = $this->get($from, $to);
 		
-		return function (array $source) use ($single): array
+		return function (array $source, Cartograph $c) use ($single): array
 		{
 			$res = [];
 			
 			foreach ($source as $item)
 			{
-				$res[] = $single($item);
+				$res[] = $single($item, $c);
 			}
 			
 			return $res;

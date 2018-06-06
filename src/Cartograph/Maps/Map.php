@@ -97,7 +97,7 @@ class Map implements IMap
 	
 	public function fromArray(array $source): IMap
 	{
-		if(!$source)
+		if (!$source)
 			throw new MapEmptyArgException();
 		
 		$this->sourceName	= $this->getTypeName(reset($source));
@@ -119,7 +119,7 @@ class Map implements IMap
 	{
 		$result = [];
 		
-		foreach($data as $val) 
+		foreach ($data as $val) 
 		{
 			$result[$val[$key]][] = $callback ? $callback($val) : $val;
 		}
