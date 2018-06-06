@@ -55,12 +55,12 @@ class Map implements IMap
 	private function transformSameItems(string $target)
 	{
 		$callback = $this->collection->getBulk($this->sourceName, $target);
-		$response = $callback(array_values($this->payload));
+		$response = $callback(array_values($this->payload), $this->cartograph);
 		
 		if ($this->keepIndexes)
-			return array_combine(array_keys($this->payload),$response);
+			return array_combine(array_keys($this->payload), $response);
 		else
-			return $callback($this->payload, $this->cartograph);
+			return $response;
 	}
 	
 	private function transformAnyItems(string $target)

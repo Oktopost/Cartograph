@@ -2,6 +2,7 @@
 namespace Cartograph\Maps;
 
 
+use Cartograph\Cartograph;
 use Cartograph\Exceptions\Maps\MapperAlreadyExistsException;
 use Cartograph\Exceptions\Maps\MapperNotSetException;
 use PHPUnit\Framework\TestCase;
@@ -66,14 +67,14 @@ class MapCollectionTest extends TestCase
 	{
 		$from	= 'A';
 		$to		= 'B';
-		$func	= function (int $item) {return 1 + $item;};
+		$func	= function (int $item) { return 1 + $item; };
 		
 		$mapCollection = new MapCollection();
 		$mapCollection->add($from, $to, $func);
 		
-		$bulkFallBackFunc= $mapCollection->getBulk($from, $to);
+		$bulkFallBackFunc = $mapCollection->getBulk($from, $to);
 		
-		$this->assertEquals([2], $bulkFallBackFunc([1]));
+		$this->assertEquals([2], $bulkFallBackFunc([1], new Cartograph()));
 	}
 	
 	public function test_merge_MergingTwoMapCollections_increasesNumberOfCollection()
