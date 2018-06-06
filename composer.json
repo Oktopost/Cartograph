@@ -1,6 +1,7 @@
 {
 	"name": "oktopost/cartograph",
 	"type": "library",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Alexey Puchkov",
