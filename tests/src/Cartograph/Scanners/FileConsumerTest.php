@@ -17,8 +17,7 @@ class FileConsumerTest extends TestCase
 	public function test_consume_loadDirWithException_willCatchExceptionAndStoreIt()
 	{
 		$consumer = new FileConsumer();
-		$consumer->setRoot(__DIR__);
-		$consumer->consume('/DirForScan/ExceptionForConsumer/exception.php');
+		$consumer->consume(__DIR__.'/DirForScan/ExceptionForConsumer/exception.php');
 		$this->assertTrue(count($consumer->getExceptions()) > 0);
 	}
 }

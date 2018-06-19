@@ -42,9 +42,8 @@ class RecursiveDirectoryScanner
 		
 		$iterator->setFileFilter(new PHPFileFilter());
 		$iterator->setRootDirectory($dir);
+		$iterator->setRelativeDirectory('/');
 		$iterator->setFileConsumer($consumer);
-		
-		$consumer->setRoot($iterator->getConfig()->RootDir);
 		
 		$iterator->execute();
 		

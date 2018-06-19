@@ -9,7 +9,6 @@ class FileConsumer implements IConsumer
 {
 	/** @var \Throwable[] */
 	private $exceptions = []; 
-	private $root; 
 	
 	
 	/**
@@ -20,17 +19,13 @@ class FileConsumer implements IConsumer
 		try
 		{
 			/** @noinspection PhpIncludeInspection */
-			require_once "{$this->root}/$path";
+			require_once "$path";
+			
 		}
 		catch (\Throwable $t)
 		{
 			$this->exceptions[] = $t;
 		}
-	}
-	
-	public function setRoot(string $root): void
-	{
-		$this->root = $root;
 	}
 	
 	/**
