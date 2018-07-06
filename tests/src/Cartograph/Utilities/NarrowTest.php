@@ -62,7 +62,7 @@ class NarrowTest extends TestCase
 		);
 	}
 	
-	public function test_toArray_FalseLikeProperties_ValuesReturned(): void
+	public function test_toArray_FalseLikeProperties_ValuesNotReturned(): void
 	{
 		/** @noinspection PhpParamsInspection */
 		self::assertEquals(
@@ -72,15 +72,12 @@ class NarrowTest extends TestCase
 					return [
 						'A'	=> LiteSetup::createString(''),
 						'B'	=> LiteSetup::createInt(0),
-						'C'	=> LiteSetup::createBool(false)
+						'C'	=> LiteSetup::createBool(false),
+						'D'	=> LiteSetup::createArray(),
 					]; 
 				}
-			}),
-			[
-				'A' => '',
-				'B'	=> 0,
-				'C' => false
-			]
+			}), 
+			[]
 		);
 	}
 	

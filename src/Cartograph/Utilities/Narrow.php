@@ -27,7 +27,7 @@ class Narrow
 			
 			foreach ($target as $key => $value)
 			{
-				if (is_null($value))
+				if (is_null($value) || ((is_scalar($value) || is_array($value)) && !$value))
 				{
 					unset($target[$key]);
 				}
