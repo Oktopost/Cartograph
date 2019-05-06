@@ -60,4 +60,15 @@ class Cartograph
 		
 		return $m;
 	}
+	
+	/**
+	 * @param mixed $source
+	 * @return IMap
+	 */
+	public function mapItem($source): IMap
+	{
+		/** @var IMap $m */
+		$m = new Map($this->scanner->getCollection(), $this);
+		return $m->from($source);
+	}
 }
