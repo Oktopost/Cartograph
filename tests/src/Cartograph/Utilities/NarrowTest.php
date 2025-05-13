@@ -3,6 +3,7 @@ namespace Cartograph\Utilities;
 
 
 use Cartograph\Base\INormalizable;
+use Cartograph\Exceptions\CartographFatalException;
 use Objection\LiteSetup;
 use Objection\LiteObject;
 
@@ -62,7 +63,7 @@ class NarrowTest extends TestCase
 		);
 	}
 	
-	public function test_toArray_FalseLikeProperties_ValuesNotReturned(): void
+	public function test_toArray_FalseLikeProperties_ValuesReturned(): void
 	{
 		/** @noinspection PhpParamsInspection */
 		self::assertEquals(
@@ -72,12 +73,15 @@ class NarrowTest extends TestCase
 					return [
 						'A'	=> LiteSetup::createString(''),
 						'B'	=> LiteSetup::createInt(0),
-						'C'	=> LiteSetup::createBool(false),
-						'D'	=> LiteSetup::createArray(),
+						'C'	=> LiteSetup::createBool(false)
 					]; 
 				}
-			}), 
-			[]
+			}, true),
+			[
+				'A' => '',
+				'B'	=> 0,
+				'C' => false
+			]
 		);
 	}
 	
@@ -148,7 +152,7 @@ class NarrowTest extends TestCase
 		
 		/** @noinspection PhpParamsInspection */
 		self::assertEquals(
-			Narrow::toArray($parent),
+			Narrow::toArray($parent, true),
 			[
 				'A'	=> [],
 				'B' => 123
@@ -207,7 +211,7 @@ class NarrowTest extends TestCase
 	public function test_toArray_AllValuesAreNulls_ReturnEmptyArray(): void
 	{
 		$obj = new ChildNormalizerTestClass();
-		self::assertEmpty(Narrow::toArray($obj), []);
+		self::assertEmpty(Narrow::toArray($obj));
 	}
 	
 	public function test_toArray_AValueIsAnotherSerializableObject_ReturnCorrectArray(): void
@@ -238,6 +242,8 @@ class NarrowTest extends TestCase
 	 */
 	public function test_toArray_InvalidTypePassed_ExceptionThrown(): void
 	{
+		self::expectException(CartographFatalException::class);
+		
 		/** @noinspection PhpParamsInspection */
 		Narrow::toArray($this);
 	}
@@ -248,6 +254,7 @@ class NarrowTest extends TestCase
 	 */
 	public function test_toArray_ValueInAnArrayIsNotScalar_ExceptionThrown(): void
 	{
+		self::expectException(CartographFatalException::class);
 		Narrow::toArray(['a' => $this]);
 	}
 }
@@ -277,12 +284,26 @@ class ChildNormalizerTestClass implements INormalizable
 	public $a;
 	public $b;
 	
-	
-	public function normalize(): array
+	private function recursiveArrayFilter($array): array
 	{
-		return [
+		foreach ($array as $key => $value)
+		{
+			if (is_array($value))
+			{
+				$array[$key] = $this->recursiveArrayFilter($value);
+			}
+		}
+		
+		return array_filter($array);
+	}
+	
+	public function normalize(bool $keepFalseLike = false): array
+	{
+		$result = [
 			'a' => $this->a,
 			'b' => $this->b
 		];
+		
+		return $keepFalseLike ? $result : $this->recursiveArrayFilter($result);
 	}
 }

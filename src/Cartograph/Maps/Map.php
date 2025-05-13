@@ -41,7 +41,7 @@ class Map implements IMap
 		}
 		else
 		{
-			return get_class($source);
+			return get_class($source ?? $this);
 		}
 	}
 	

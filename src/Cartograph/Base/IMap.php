@@ -11,8 +11,9 @@ interface IMap
 	public function keepIndexes(): IMap;
 	
 	/**
-	 * @param string $target
-	 * @return mixed
+	 * @template R of object
+	 * @param class-string<R> $target
+	 * @return R[]
 	 */
 	public function into(string $target);
 }

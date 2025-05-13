@@ -21,10 +21,11 @@ class ClassAnnotationScanner
 	private static function checkSignature(string $className, array $params, \ReflectionMethod $method): void
 	{
 		$paramsCount = count($params);
+		
 		if (!$paramsCount ||
 			$paramsCount > 2 ||
 			!$method->getReturnType() ||
-			$paramsCount == 2 && (is_null($params[1]->getClass()) || $params[1]->getClass()->name !== Cartograph::class)
+			$paramsCount == 2 && (is_null($params[1]->getType()) || $params[1]->getType()->getName() !== Cartograph::class)
 		)
 			throw new WrongArgumentException($className, $method->name);
 	}
@@ -47,8 +48,8 @@ class ClassAnnotationScanner
 				self::checkSignature($className, $params, $method);
 				
 				$mapCollection->add(
-					$params[0]->getType(), 
-					$method->getReturnType(), 
+					$params[0]->getType()->getName(),
+					$method->getReturnType()->getName(),
 					$method->class . '::' . $method->name
 				);
 			}

@@ -5,5 +5,5 @@ namespace Cartograph\Base;
 
 interface INormalizable
 {
-	public function normalize(): array;
+	public function normalize(bool $keepFalseLike = false): array;
 }
